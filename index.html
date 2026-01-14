@@ -6,14 +6,8 @@
   <title>Calculadora de Porcentagem</title>
   <style>
     :root {
-      --bg-light: #f2f2f2;
-      --card-light: #ffffff;
-      --text-light: #333;
       --accent: #4CAF50;
-
-      --bg-dark: #0f172a;
-      --card-dark: #1e293b;
-      --text-dark: #e5e7eb;
+      --error: #ef4444;
     }
 
     body {
@@ -24,34 +18,29 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background: var(--bg-light);
-      color: var(--text-light);
+      background: #f2f2f2;
+      color: #222;
     }
 
     @media (prefers-color-scheme: dark) {
       body {
-        background: var(--bg-dark);
-        color: var(--text-dark);
+        background: #0f172a;
+        color: #e5e7eb;
       }
       .container {
-        background: var(--card-dark);
-        color: var(--text-dark);
+        background: #1e293b;
         border: 1px solid #334155;
       }
       input {
         background: #0f172a;
-        color: var(--text-dark);
+        color: #e5e7eb;
         border: 1px solid #334155;
-      }
-      button {
-        background: var(--accent);
-        color: #fff;
       }
     }
 
     .container {
-      background: var(--card-light);
-      padding: 20px;
+      background: #fff;
+      padding: 24px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       width: 90%;
@@ -61,19 +50,21 @@
     h2 {
       text-align: center;
       margin-bottom: 16px;
+      font-size: 1.4rem;
     }
 
     label {
       display: block;
-      margin-top: 12px;
+      margin-top: 14px;
       font-weight: 500;
+      font-size: 0.95rem;
     }
 
     input {
       width: 100%;
       padding: 12px;
       margin-top: 6px;
-      font-size: 16px;
+      font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
       outline: none;
@@ -90,7 +81,7 @@
       padding: 14px;
       background: var(--accent);
       color: white;
-      font-size: 16px;
+      font-size: 1rem;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -103,13 +94,13 @@
 
     .resultado {
       margin-top: 16px;
-      font-size: 16px;
+      font-size: 1rem;
       text-align: center;
       font-weight: 500;
     }
 
     .divider {
-      margin: 20px 0;
+      margin: 24px 0;
       border-top: 1px solid #ddd;
     }
   </style>
