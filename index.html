@@ -7,7 +7,6 @@
   <style>
     :root {
       --accent: #4CAF50;
-      --error: #ef4444;
     }
 
     body {
@@ -25,7 +24,7 @@
     @media (prefers-color-scheme: dark) {
       body {
         background: #0f172a;
-        color: #e5e7eb;
+        color: #f9fafb; /* texto mais claro mas com contraste */
       }
       .container {
         background: #1e293b;
@@ -33,18 +32,19 @@
       }
       input {
         background: #0f172a;
-        color: #e5e7eb;
-        border: 1px solid #334155;
+        color: #f9fafb;
+        border: 1px solid #475569;
       }
     }
 
     .container {
       background: #fff;
-      padding: 24px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      width: 90%;
+      width: 100%;
       max-width: 420px;
+      box-sizing: border-box;
     }
 
     h2 {
@@ -62,6 +62,7 @@
 
     input {
       width: 100%;
+      box-sizing: border-box; /* garante que não ultrapasse */
       padding: 12px;
       margin-top: 6px;
       font-size: 1rem;
