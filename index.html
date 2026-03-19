@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora de Porcentagem & Portfólio</title>
+  <title>Luna | Gestão de Portfólio BTC</title>
   <style>
     :root {
       --accent: #4CAF50;
       --btc-orange: #f7931a;
+      --text-main: #0f172a;
     }
 
     body {
@@ -19,50 +20,45 @@
       align-items: center;
       min-height: 100vh;
       background: #f2f2f2;
-      color: #0f172a;
+      color: var(--text-main);
     }
 
     @media (prefers-color-scheme: dark) {
-      body {
-        background: #0f172a;
-        color: #1a1101;
-      }
-      .container {
-        background: #1e293b;
-        border: 1px solid #334155;
-      }
-      input {
-        background: #0f172a;
-        color: #e2e8f0;
-        border: 1px solid #475569;
-      }
+      body { background: #0f172a; color: #1a1101; }
+      .container { background: #1e293b; border: 1px solid #334155; }
+      input { background: #0f172a; color: #e2e8f0; border: 1px solid #475569; }
       h2, h3 { color: #1a1101; }
-      label { color: #1a1101; }
+      label { color: #cbd5e1; }
+      .resultado { background: rgba(255,255,255,0.05); }
     }
 
     .container {
       background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 420px;
+      max-width: 450px;
       box-sizing: border-box;
     }
 
-    h2, h3 {
-      text-align: center;
-      margin-bottom: 16px;
-    }
+    h2, h3 { text-align: center; margin-bottom: 16px; margin-top: 0; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--btc-orange); padding-bottom: 8px; }
+    h3 { font-size: 1rem; color: var(--btc-orange); margin-top: 20px; }
 
-    h2 { font-size: 1.4rem; }
-    h3 { font-size: 1.1rem; color: var(--btc-orange); margin-top: 0; }
+    .grid-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
     label {
       display: block;
       margin-top: 14px;
-      font-weight: 500;
-      font-size: 0.95rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     input {
@@ -74,146 +70,140 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       outline: none;
+      transition: 0.2s;
     }
 
     input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+      border-color: var(--btc-orange);
+      box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.2);
     }
 
     button {
       width: 100%;
-      margin-top: 16px;
+      margin-top: 20px;
       padding: 14px;
-      background: var(--accent);
+      background: var(--btc-orange);
       color: white;
       font-size: 1rem;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
+      font-weight: 700;
+      transition: 0.3s;
     }
 
-    button:hover { background: #45a049; }
-
-    .btn-portfolio { background: var(--btc-orange); }
-    .btn-portfolio:hover { background: #e8830e; }
+    button:hover { background: #e8830e; transform: translateY(-1px); }
 
     .resultado {
-      margin-top: 16px;
-      padding: 10px;
-      background: rgba(0,0,0,0.05);
-      border-radius: 8px;
+      margin-top: 20px;
+      padding: 15px;
+      background: #1a1101;
+      border-radius: 10px;
       font-size: 0.95rem;
       text-align: center;
-      font-weight: 500;
-      line-height: 1.4;
+      border-left: 4px solid var(--btc-orange);
     }
 
-    .divider {
-      margin: 24px 0;
-      border-top: 1px solid #ddd;
+    .alerta-ajuste {
+      margin-top: 10px;
+      color: #38bdf8;
+      font-weight: 700;
+      display: block;
+      font-size: 1.05rem;
     }
+
+    .divider { margin: 30px 0; border-top: 1px dashed #cbd5e1; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Calculadora Financeira</h2>
+    <h2>Estratégia Luna ₿</h2>
 
-    <h3>Rebalanceamento (BTC vs Caixa)</h3>
-    <label for="saldoBtc">Saldo em BTC (R$):</label>
-    <input type="number" id="saldoBtc" placeholder="Ex: 6000">
+    <h3>Balanceamento de Carteira</h3>
+    
+    <div class="grid-inputs">
+      <div>
+        <label>Saldo BTC (R$)</label>
+        <input type="number" id="saldoBtc" placeholder="Ex: 6000">
+      </div>
+      <div>
+        <label>Saldo Caixa (R$)</label>
+        <input type="number" id="saldoCaixa" placeholder="Ex: 4000">
+      </div>
+    </div>
 
-    <label for="saldoCaixa">Saldo em Caixa/Nubank (R$):</label>
-    <input type="number" id="saldoCaixa" placeholder="Ex: 4000">
+    <div class="grid-inputs" style="margin-top: 10px;">
+      <div>
+        <label>Meta BTC (%)</label>
+        <input type="number" id="metaBtc" value="50">
+      </div>
+      <div>
+        <label>Meta Caixa (%)</label>
+        <input type="number" id="metaCaixa" value="50">
+      </div>
+    </div>
 
-    <button class="btn-portfolio" onclick="calcularPortfolio()">Analisar Portfólio</button>
-    <div class="resultado" id="resultadoPortfolio">Aguardando dados...</div>
+    <button onclick="calcularPortfolio()">Analisar e Rebalancear</button>
+    
+    <div class="resultado" id="resPort">
+      Insira os valores para calcular o ajuste.
+    </div>
 
     <div class="divider"></div>
 
-    <label for="valorInicial">Valor Inicial (R$):</label>
-    <input type="number" id="valorInicial" placeholder="Ex: 85">
+    <label>Valor Inicial vs Final (Diferença %)</label>
+    <div class="grid-inputs">
+      <input type="number" id="vInic" placeholder="Início">
+      <input type="number" id="vFin" placeholder="Fim">
+    </div>
+    <button style="background: var(--accent);" onclick="calcDif()">Calcular Diferença</button>
+    <div class="resultado" id="resDif">---</div>
 
-    <label for="valorFinal">Valor Final (R$):</label>
-    <input type="number" id="valorFinal" placeholder="Ex: 90">
-
-    <button onclick="calcularPorcentagem()">Calcular diferença (%)</button>
-    <div class="resultado" id="resultado1"></div>
-
-    <div class="divider"></div>
-
-    <label for="valorBase">Valor Base (R$):</label>
-    <input type="number" id="valorBase" placeholder="Ex: 85">
-
-    <label for="percentual">Porcentagem (%):</label>
-    <input type="number" id="percentual" placeholder="Ex: 5.88">
-
-    <button onclick="calcularValorFinal()">Calcular valor final</button>
-    <div class="resultado" id="resultado2"></div>
   </div>
 
   <script>
     function calcularPortfolio() {
       const btc = parseFloat(document.getElementById('saldoBtc').value) || 0;
       const caixa = parseFloat(document.getElementById('saldoCaixa').value) || 0;
-      const resDiv = document.getElementById('resultadoPortfolio');
+      const mBtc = parseFloat(document.getElementById('metaBtc').value) || 50;
+      const mCaixa = parseFloat(document.getElementById('metaCaixa').value) || 50;
+      const res = document.getElementById('resPort');
 
-      if (btc === 0 && caixa === 0) {
-        resDiv.textContent = "Insira os valores para calcular.";
-        return;
-      }
+      if (btc + caixa === 0) return;
 
       const total = btc + caixa;
-      const percBtc = (btc / total) * 100;
-      const percCaixa = (caixa / total) * 100;
-      const diferenca = Math.abs(btc - caixa);
+      const btcAtualPerc = (btc / total) * 100;
+      const caixaAtualPerc = (caixa / total) * 100;
+
+      // Cálculo do valor ideal baseado na meta
+      const btcIdeal = (total * mBtc) / 100;
+      const caixaIdeal = (total * mCaixa) / 100;
       
-      let comparativo = "";
-      if (btc > caixa) {
-        comparativo = `BTC está <strong>R$ ${diferenca.toFixed(2)}</strong> acima do Caixa.`;
-      } else if (caixa > btc) {
-        comparativo = `Caixa está <strong>R$ ${diferenca.toFixed(2)}</strong> acima do BTC.`;
+      let mensagemAjuste = "";
+      const diff = btc - btcIdeal;
+
+      if (diff > 1) {
+        mensagemAjuste = `<span class="alerta-ajuste">Mover R$ ${diff.toFixed(2)} do BTC para o Caixa</span>`;
+      } else if (diff < -1) {
+        mensagemAjuste = `<span class="alerta-ajuste">Mover R$ ${Math.abs(diff).toFixed(2)} do Caixa para o BTC</span>`;
       } else {
-        comparativo = "BTC e Caixa estão equilibrados!";
+        mensagemAjuste = `<span class="alerta-ajuste" style="color:var(--accent)">Portfólio em Equilíbrio Perfeito!</span>`;
       }
 
-      resDiv.innerHTML = `
-        Total: R$ ${total.toFixed(2)} <br>
-        ₿ BTC: ${percBtc.toFixed(1)}% | 💵 Caixa: ${percCaixa.toFixed(1)}% <br>
-        <small>${comparativo}</small>
+      res.innerHTML = `
+        <strong>Total: R$ ${total.toFixed(2)}</strong><br>
+        ₿ ${btcAtualPerc.toFixed(1)}% | 💵 ${caixaAtualPerc.toFixed(1)}%<br>
+        ${mensagemAjuste}
       `;
     }
 
-    function calcularPorcentagem() {
-      const inicial = parseFloat(document.getElementById('valorInicial').value);
-      const final = parseFloat(document.getElementById('valorFinal').value);
-      const resultadoDiv = document.getElementById('resultado1');
-
-      if (isNaN(inicial) || isNaN(final) || inicial === 0) {
-        resultadoDiv.textContent = "Por favor, insira valores válidos.";
-        return;
-      }
-
-      const diferenca = final - inicial;
-      const porcentagem = (diferenca / inicial) * 100;
-      resultadoDiv.textContent = `Diferença: R$ ${diferenca.toFixed(2)} (${porcentagem.toFixed(2)}%)`;
-    }
-
-    function calcularValorFinal() {
-      const base = parseFloat(document.getElementById('valorBase').value);
-      const percentual = parseFloat(document.getElementById('percentual').value);
-      const resultadoDiv = document.getElementById('resultado2');
-
-      if (isNaN(base) || isNaN(percentual)) {
-        resultadoDiv.textContent = "Por favor, insira valores válidos.";
-        return;
-      }
-
-      const acrescimo = (base * percentual) / 100;
-      const final = base + acrescimo;
-      resultadoDiv.textContent = `Acréscimo: R$ ${acrescimo.toFixed(2)} → Final: R$ ${final.toFixed(2)}`;
+    function calcDif() {
+      const i = parseFloat(document.getElementById('vInic').value);
+      const f = parseFloat(document.getElementById('vFin').value);
+      const res = document.getElementById('resDif');
+      if (!i || !f) return;
+      const p = ((f - i) / i) * 100;
+      res.innerHTML = `Diferença: R$ ${(f-i).toFixed(2)} (${p.toFixed(2)}%)`;
     }
   </script>
 </body>
