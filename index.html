@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora de Porcentagem</title>
+  <title>Calculadora de Porcentagem & Portfólio</title>
   <style>
     :root {
       --accent: #4CAF50;
+      --btc-orange: #f7931a;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -24,7 +25,7 @@
     @media (prefers-color-scheme: dark) {
       body {
         background: #0f172a;
-        color: #141A24; /* texto mais claro mas com contraste */
+        color: #f8fafc;
       }
       .container {
         background: #1e293b;
@@ -35,6 +36,8 @@
         color: #e2e8f0;
         border: 1px solid #475569;
       }
+      h2, h3 { color: #f8fafc; }
+      label { color: #cbd5e1; }
     }
 
     .container {
@@ -47,11 +50,13 @@
       box-sizing: border-box;
     }
 
-    h2 {
+    h2, h3 {
       text-align: center;
       margin-bottom: 16px;
-      font-size: 1.4rem;
     }
+
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.1rem; color: var(--btc-orange); margin-top: 0; }
 
     label {
       display: block;
@@ -62,7 +67,7 @@
 
     input {
       width: 100%;
-      box-sizing: border-box; /* garante que não ultrapasse */
+      box-sizing: border-box;
       padding: 12px;
       margin-top: 6px;
       font-size: 1rem;
@@ -87,17 +92,23 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      transition: 0.2s;
     }
 
-    button:hover {
-      background: #45a049;
-    }
+    button:hover { background: #45a049; }
+
+    .btn-portfolio { background: var(--btc-orange); }
+    .btn-portfolio:hover { background: #e8830e; }
 
     .resultado {
       margin-top: 16px;
-      font-size: 1rem;
+      padding: 10px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+      font-size: 0.95rem;
       text-align: center;
       font-weight: 500;
+      line-height: 1.4;
     }
 
     .divider {
@@ -108,9 +119,20 @@
 </head>
 <body>
   <div class="container">
-    <h2>Calculadora de Porcentagem</h2>
+    <h2>Calculadora Financeira</h2>
 
-    <!-- Diferença percentual -->
+    <h3>Rebalanceamento (BTC vs Caixa)</h3>
+    <label for="saldoBtc">Saldo em BTC (R$):</label>
+    <input type="number" id="saldoBtc" placeholder="Ex: 6000">
+
+    <label for="saldoCaixa">Saldo em Caixa/Nubank (R$):</label>
+    <input type="number" id="saldoCaixa" placeholder="Ex: 4000">
+
+    <button class="btn-portfolio" onclick="calcularPortfolio()">Analisar Portfólio</button>
+    <div class="resultado" id="resultadoPortfolio">Aguardando dados...</div>
+
+    <div class="divider"></div>
+
     <label for="valorInicial">Valor Inicial (R$):</label>
     <input type="number" id="valorInicial" placeholder="Ex: 85">
 
@@ -122,7 +144,6 @@
 
     <div class="divider"></div>
 
-    <!-- Valor final a partir de porcentagem -->
     <label for="valorBase">Valor Base (R$):</label>
     <input type="number" id="valorBase" placeholder="Ex: 85">
 
@@ -134,6 +155,37 @@
   </div>
 
   <script>
+    function calcularPortfolio() {
+      const btc = parseFloat(document.getElementById('saldoBtc').value) || 0;
+      const caixa = parseFloat(document.getElementById('saldoCaixa').value) || 0;
+      const resDiv = document.getElementById('resultadoPortfolio');
+
+      if (btc === 0 && caixa === 0) {
+        resDiv.textContent = "Insira os valores para calcular.";
+        return;
+      }
+
+      const total = btc + caixa;
+      const percBtc = (btc / total) * 100;
+      const percCaixa = (caixa / total) * 100;
+      const diferenca = Math.abs(btc - caixa);
+      
+      let comparativo = "";
+      if (btc > caixa) {
+        comparativo = `BTC está <strong>R$ ${diferenca.toFixed(2)}</strong> acima do Caixa.`;
+      } else if (caixa > btc) {
+        comparativo = `Caixa está <strong>R$ ${diferenca.toFixed(2)}</strong> acima do BTC.`;
+      } else {
+        comparativo = "BTC e Caixa estão equilibrados!";
+      }
+
+      resDiv.innerHTML = `
+        Total: R$ ${total.toFixed(2)} <br>
+        ₿ BTC: ${percBtc.toFixed(1)}% | 💵 Caixa: ${percCaixa.toFixed(1)}% <br>
+        <small>${comparativo}</small>
+      `;
+    }
+
     function calcularPorcentagem() {
       const inicial = parseFloat(document.getElementById('valorInicial').value);
       const final = parseFloat(document.getElementById('valorFinal').value);
@@ -146,7 +198,6 @@
 
       const diferenca = final - inicial;
       const porcentagem = (diferenca / inicial) * 100;
-
       resultadoDiv.textContent = `Diferença: R$ ${diferenca.toFixed(2)} (${porcentagem.toFixed(2)}%)`;
     }
 
@@ -162,8 +213,7 @@
 
       const acrescimo = (base * percentual) / 100;
       const final = base + acrescimo;
-
-      resultadoDiv.textContent = `Acréscimo: R$ ${acrescimo.toFixed(2)} → Valor final: R$ ${final.toFixed(2)}`;
+      resultadoDiv.textContent = `Acréscimo: R$ ${acrescimo.toFixed(2)} → Final: R$ ${final.toFixed(2)}`;
     }
   </script>
 </body>
