@@ -3,84 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Luna | Gestão de Portfólio BTC</title>
+  <title>Dashboard Luna | BTC & Caixa</title>
   <style>
     :root {
       --accent: #4CAF50;
       --btc-orange: #f7931a;
-      --text-main: #0f172a;
+      --bg-dark: #0f172a;
+      --card-dark: #1e293b;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 15px;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       background: #f2f2f2;
-      color: var(--text-main);
+      color: #0f172a;
     }
 
     @media (prefers-color-scheme: dark) {
-      body { background: #0f172a; color: #1a1101; }
-      .container { background: #1e293b; border: 1px solid #334155; }
-      input { background: #0f172a; color: #e2e8f0; border: 1px solid #475569; }
-      h2, h3 { color: #1a1101; }
-      label { color: #cbd5e1; }
-      .resultado { background: rgba(255,255,255,0.05); }
+      body { background: var(--bg-dark); color: #f8fafc; }
+      .container { background: var(--card-dark); border: 1px solid #334155; }
+      input { background: var(--bg-dark); color: #e2e8f0; border: 1px solid #475569; }
+      .resultado { background: rgba(0,0,0,0.2); }
     }
 
     .container {
       background: #fff;
-      padding: 24px;
+      padding: 20px;
       border-radius: 16px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 450px;
+      max-width: 440px;
       box-sizing: border-box;
     }
 
-    h2, h3 { text-align: center; margin-bottom: 16px; margin-top: 0; }
-    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--btc-orange); padding-bottom: 8px; }
-    h3 { font-size: 1rem; color: var(--btc-orange); margin-top: 20px; }
+    h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3rem; color: var(--btc-orange); text-transform: uppercase; letter-spacing: 1px; }
+    h3 { font-size: 0.9rem; margin: 20px 0 10px 0; border-bottom: 1px solid #ddd; padding-bottom: 5px; opacity: 0.8; }
 
-    .grid-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    label {
-      display: block;
-      margin-top: 14px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    
+    label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    
     input {
       width: 100%;
       box-sizing: border-box;
-      padding: 12px;
-      margin-top: 6px;
+      padding: 10px;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
       outline: none;
-      transition: 0.2s;
-    }
-
-    input:focus {
-      border-color: var(--btc-orange);
-      box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.2);
     }
 
     button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 14px;
       background: var(--btc-orange);
       color: white;
@@ -89,122 +69,118 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
-      transition: 0.3s;
     }
-
-    button:hover { background: #e8830e; transform: translateY(-1px); }
 
     .resultado {
-      margin-top: 20px;
+      margin-top: 15px;
       padding: 15px;
-      background: #1a1101;
+      background: #f8fafc;
       border-radius: 10px;
-      font-size: 0.95rem;
-      text-align: center;
-      border-left: 4px solid var(--btc-orange);
+      font-size: 0.9rem;
+      line-height: 1.6;
     }
 
-    .alerta-ajuste {
-      margin-top: 10px;
-      color: #38bdf8;
-      font-weight: 700;
-      display: block;
-      font-size: 1.05rem;
-    }
-
-    .divider { margin: 30px 0; border-top: 1px dashed #cbd5e1; }
+    .destaque-total { font-size: 1.1rem; color: var(--btc-orange); display: block; margin-bottom: 8px; border-bottom: 1px solid rgba(247, 147, 26, 0.2); padding-bottom: 5px; }
+    .ajuste-msg { display: block; margin-top: 10px; padding: 10px; border-radius: 6px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; font-weight: 700; text-align: center; }
+    
+    .divider { margin: 25px 0; border-top: 2px dashed #ddd; opacity: 0.3; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Estratégia Luna ₿</h2>
 
-    <h3>Balanceamento de Carteira</h3>
-    
-    <div class="grid-inputs">
-      <div>
-        <label>Saldo BTC (R$)</label>
-        <input type="number" id="saldoBtc" placeholder="Ex: 6000">
-      </div>
-      <div>
-        <label>Saldo Caixa (R$)</label>
-        <input type="number" id="saldoCaixa" placeholder="Ex: 4000">
-      </div>
+<div class="container">
+  <h2>Estratégia Luna ₿</h2>
+
+  <div class="grid">
+    <div>
+      <label>Saldo BTC (R$)</label>
+      <input type="number" id="btc" placeholder="0.00">
     </div>
-
-    <div class="grid-inputs" style="margin-top: 10px;">
-      <div>
-        <label>Meta BTC (%)</label>
-        <input type="number" id="metaBtc" value="50">
-      </div>
-      <div>
-        <label>Meta Caixa (%)</label>
-        <input type="number" id="metaCaixa" value="50">
-      </div>
+    <div>
+      <label>Saldo Caixa (R$)</label>
+      <input type="number" id="caixa" placeholder="0.00">
     </div>
-
-    <button onclick="calcularPortfolio()">Analisar e Rebalancear</button>
-    
-    <div class="resultado" id="resPort">
-      Insira os valores para calcular o ajuste.
-    </div>
-
-    <div class="divider"></div>
-
-    <label>Valor Inicial vs Final (Diferença %)</label>
-    <div class="grid-inputs">
-      <input type="number" id="vInic" placeholder="Início">
-      <input type="number" id="vFin" placeholder="Fim">
-    </div>
-    <button style="background: var(--accent);" onclick="calcDif()">Calcular Diferença</button>
-    <div class="resultado" id="resDif">---</div>
-
   </div>
 
-  <script>
-    function calcularPortfolio() {
-      const btc = parseFloat(document.getElementById('saldoBtc').value) || 0;
-      const caixa = parseFloat(document.getElementById('saldoCaixa').value) || 0;
-      const mBtc = parseFloat(document.getElementById('metaBtc').value) || 50;
-      const mCaixa = parseFloat(document.getElementById('metaCaixa').value) || 50;
-      const res = document.getElementById('resPort');
+  <div class="grid">
+    <div>
+      <label>Meta BTC (%)</label>
+      <input type="number" id="mBtc" value="50">
+    </div>
+    <div>
+      <label>Meta Caixa (%)</label>
+      <input type="number" id="mCaixa" value="50">
+    </div>
+  </div>
 
-      if (btc + caixa === 0) return;
+  <button onclick="analisar()">Analisar Carteira</button>
 
-      const total = btc + caixa;
-      const btcAtualPerc = (btc / total) * 100;
-      const caixaAtualPerc = (caixa / total) * 100;
+  <div id="resAnalise" class="resultado" style="display:none;"></div>
 
-      // Cálculo do valor ideal baseado na meta
-      const btcIdeal = (total * mBtc) / 100;
-      const caixaIdeal = (total * mCaixa) / 100;
-      
-      let mensagemAjuste = "";
-      const diff = btc - btcIdeal;
+  <div class="divider"></div>
 
-      if (diff > 1) {
-        mensagemAjuste = `<span class="alerta-ajuste">Mover R$ ${diff.toFixed(2)} do BTC para o Caixa</span>`;
-      } else if (diff < -1) {
-        mensagemAjuste = `<span class="alerta-ajuste">Mover R$ ${Math.abs(diff).toFixed(2)} do Caixa para o BTC</span>`;
-      } else {
-        mensagemAjuste = `<span class="alerta-ajuste" style="color:var(--accent)">Portfólio em Equilíbrio Perfeito!</span>`;
-      }
+  <h3>Calculadora de Diferença (%)</h3>
+  <div class="grid">
+    <input type="number" id="vIni" placeholder="Inicial">
+    <input type="number" id="vFin" placeholder="Final">
+  </div>
+  <button style="background:var(--accent)" onclick="calcPct()">Calcular Diferença %</button>
+  <div id="resPct" class="resultado" style="display:none;"></div>
 
-      res.innerHTML = `
-        <strong>Total: R$ ${total.toFixed(2)}</strong><br>
-        ₿ ${btcAtualPerc.toFixed(1)}% | 💵 ${caixaAtualPerc.toFixed(1)}%<br>
-        ${mensagemAjuste}
-      `;
+</div>
+
+<script>
+  function analisar() {
+    const b = parseFloat(document.getElementById('btc').value) || 0;
+    const c = parseFloat(document.getElementById('caixa').value) || 0;
+    const mb = parseFloat(document.getElementById('mBtc').value) || 50;
+    const mc = parseFloat(document.getElementById('mCaixa').value) || 50;
+    const div = document.getElementById('resAnalise');
+
+    const total = b + c;
+    if(total === 0) return;
+
+    const pB = (b / total) * 100;
+    const pC = (c / total) * 100;
+    
+    const idealB = (total * mb) / 100;
+    const dif = b - idealB;
+
+    let msg = "";
+    if (Math.abs(dif) < 1) {
+      msg = `<span class="ajuste-msg" style="color:var(--accent); background:rgba(76,175,80,0.1)">✅ Carteira Equilibrada!</span>`;
+    } else if (dif > 0) {
+      msg = `<span class="ajuste-msg">Vender R$ ${dif.toFixed(2)} de BTC p/ Caixa</span>`;
+    } else {
+      msg = `<span class="ajuste-msg">Mover R$ ${Math.abs(dif).toFixed(2)} do Caixa p/ BTC</span>`;
     }
 
-    function calcDif() {
-      const i = parseFloat(document.getElementById('vInic').value);
-      const f = parseFloat(document.getElementById('vFin').value);
-      const res = document.getElementById('resDif');
-      if (!i || !f) return;
-      const p = ((f - i) / i) * 100;
-      res.innerHTML = `Diferença: R$ ${(f-i).toFixed(2)} (${p.toFixed(2)}%)`;
-    }
-  </script>
+    div.style.display = "block";
+    div.innerHTML = `
+      <strong class="destaque-total">Patrimônio Total: R$ ${total.toFixed(2)}</strong>
+      <strong>BTC:</strong> R$ ${b.toFixed(2)} (${pB.toFixed(1)}%) <br>
+      <strong>Caixa:</strong> R$ ${c.toFixed(2)} (${pC.toFixed(1)}%) <br>
+      ${msg}
+    `;
+  }
+
+  function calcPct() {
+    const i = parseFloat(document.getElementById('vIni').value);
+    const f = parseFloat(document.getElementById('vFin').value);
+    const div = document.getElementById('resPct');
+    
+    if(!i || !f) return;
+    
+    const d = f - i;
+    const p = (d / i) * 100;
+    
+    div.style.display = "block";
+    div.innerHTML = `
+      Diferença: <strong>R$ ${d.toFixed(2)}</strong> <br>
+      Percentual: <strong>${p.toFixed(2)}%</strong>
+    `;
+  }
+</script>
+
 </body>
 </html>
