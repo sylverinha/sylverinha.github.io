@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Luna Pro | Estratégia Luna ₿</title>
+  <title>Luna Pro | Gestão Financeira</title>
   <style>
     :root {
-      --accent: #10b981;           /* verde do botão de diferença */
-      --btc-orange: #f59e0b;
+      --accent: #4CAF50;
+      --btc-orange: #f7931a;
       --bg-dark: #0f172a;
-      --card-light: #ffffff;
-      --input-dark: #1e293b;
+      --card-dark: #1e293b;
+      --text-light: #e2e8f0;
       --text-dark: #0f172a;
-      --text-muted: #475569;       /* cinza ESCURO para labels e títulos de seção (agora legível!) */
-      --border-light: #e2e8f0;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
@@ -26,292 +26,15 @@
       justify-content: center;
       align-items: center;
       min-height: 100dvh;
-      background: var(--bg-dark);
+      background: #f2f2f2;
       color: var(--text-dark);
+      line-height: 1.5;
     }
 
-    /* === CONTAINER (igual ao visual do print) === */
-    .container {
-      background: var(--card-light);
-      padding: 28px 24px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-      width: 100%;
-      max-width: 420px;
-      transition: all 0.3s ease;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px 16px;
-        border-radius: 20px;
-        max-width: 100%;
-      }
-    }
-
-    /* === TÍTULO PRINCIPAL (igual ao print) === */
-    h1 {
-      text-align: center;
-      font-size: 1.65rem;
-      font-weight: 800;
-      color: var(--btc-orange);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin: 0 0 28px 0;
-    }
-
-    /* === TÍTULOS DE SEÇÃO (agora com contraste bom!) === */
-    .section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      letter-spacing: 0.8px;
-      margin: 32px 0 12px 0;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    /* === LABELS (agora legíveis!) === */
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      letter-spacing: 0.5px;
-    }
-
-    /* === INPUTS (exatamente como no print: fundo escuro) === */
-    input {
-      width: 100%;
-      background: var(--input-dark);
-      color: #f1f5f9;
-      border: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 1.15rem;
-      font-weight: 600;
-      outline: none;
-      transition: all 0.2s;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    input:focus {
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
-    }
-
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      appearance: none;
-      margin: 0;
-    }
-
-    /* === BOTÕES (cores exatas do print) === */
-    button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 16px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    }
-
-    button:active { transform: scale(0.97); }
-
-    /* Botão principal (laranja) */
-    .btn-primary {
-      background: var(--btc-orange);
-      color: white;
-    }
-
-    /* Botões secundários (verde) */
-    .btn-secondary {
-      background: var(--accent);
-      color: white;
-    }
-
-    /* === RESULTADOS === */
-    .resultado {
-      margin-top: 18px;
-      padding: 18px;
-      background: #f8fafc;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      border: 1px solid #e2e8f0;
-      display: none;
-    }
-
-    .destaque-total {
-      font-size: 1.2rem;
-      color: var(--btc-orange);
-      font-weight: 700;
-      margin-bottom: 10px;
-      display: block;
-    }
-
-    .ajuste-msg {
-      display: block;
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      text-align: center;
-    }
-
-    /* === DIVIDER (linha tracejada do print) === */
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, #cbd5e1 50%, transparent);
-      margin: 32px 0;
-    }
-
-    /* === MODO DARK (mantém compatibilidade) === */
+    /* === MODO DARK (melhorado e corrigido) === */
     @media (prefers-color-scheme: dark) {
-      body { background: #020617; }
-      .container { background: #1e293b; }
-      input { background: #0f172a; color: #e2e8f0; }
-      .resultado { background: #0f172a; border-color: #334155; }
-    }
-  </style>
-</head>
-<body>
-
-<div class="container">
-  <h1>Estratégia Luna ₿</h1>
-
-  <!-- === REBALANCEAMENTO === -->
-  <div class="section-title">Rebalanceamento de Carteira</div>
-  
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-    <div>
-      <label for="btc">Saldo BTC (R$)</label>
-      <input type="number" id="btc" placeholder="0.00" step="0.01">
-    </div>
-    <div>
-      <label for="caixa">Saldo Caixa (R$)</label>
-      <input type="number" id="caixa" placeholder="0.00" step="0.01">
-    </div>
-  </div>
-
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
-    <div>
-      <label for="mBtc">Meta BTC (%)</label>
-      <input type="number" id="mBtc" value="50" step="1">
-    </div>
-    <div>
-      <label for="mCaixa">Meta Caixa (%)</label>
-      <input type="number" id="mCaixa" value="50" step="1">
-    </div>
-  </div>
-
-  <button class="btn-primary" onclick="analisar()">Analisar e Rebalancear</button>
-  <div id="resAnalise" class="resultado"></div>
-
-  <div class="divider"></div>
-
-  <!-- === CALCULADORA DE DIFERENÇA === -->
-  <div class="section-title">Calculadora de Diferença (%)</div>
-  
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-    <div>
-      <label for="vIni">Valor Inicial (R$)</label>
-      <input type="number" id="vIni" placeholder="0.00" step="0.01">
-    </div>
-    <div>
-      <label for="vFin">Valor Final (R$)</label>
-      <input type="number" id="vFin" placeholder="0.00" step="0.01">
-    </div>
-  </div>
-
-  <button class="btn-secondary" onclick="calcPct()">Calcular Diferença</button>
-  <div id="resPct" class="resultado"></div>
-
-  <div class="divider"></div>
-
-  <!-- === CÁLCULO DE ACRÉSCIMO === -->
-  <div class="section-title">Cálculo de Acréscimo (%)</div>
-  
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-    <div>
-      <label for="vBase">Valor Base (R$)</label>
-      <input type="number" id="vBase" placeholder="0.00" step="0.01">
-    </div>
-    <div>
-      <label for="pctAdd">Porcentagem (%)</label>
-      <input type="number" id="pctAdd" placeholder="0" step="0.1">
-    </div>
-  </div>
-
-  <button class="btn-secondary" onclick="calcValorFinal()">Calcular Valor Final</button>
-  <div id="resFinal" class="resultado"></div>
-</div>
-
-<script>
-  /* === JS 100% INALTERADO (funcionalidades intactas) === */
-  function analisar() {
-    const b = parseFloat(document.getElementById('btc').value) || 0;
-    const c = parseFloat(document.getElementById('caixa').value) || 0;
-    const mb = parseFloat(document.getElementById('mBtc').value) || 50;
-    const div = document.getElementById('resAnalise');
-
-    const total = b + c;
-    if(total === 0) return;
-
-    const pB = (b / total) * 100;
-    const pC = (c / total) * 100;
-    const idealB = (total * mb) / 100;
-    const dif = b - idealB;
-
-    let msg = "";
-    if (Math.abs(dif) < 1) {
-      msg = `<span class="ajuste-msg" style="color:#10b981; background:rgba(16,185,129,0.15)">✅ Equilibrado!</span>`;
-    } else if (dif > 0) {
-      msg = `<span class="ajuste-msg" style="background:rgba(245,158,11,0.15)">Mover R$ ${dif.toFixed(2)} do BTC p/ Caixa</span>`;
-    } else {
-      msg = `<span class="ajuste-msg" style="background:rgba(245,158,11,0.15)">Mover R$ ${Math.abs(dif).toFixed(2)} do Caixa p/ BTC</span>`;
-    }
-
-    div.style.display = "block";
-    div.innerHTML = `
-      <strong class="destaque-total">Total: R$ ${total.toFixed(2)}</strong>
-      ₿ <strong>BTC:</strong> R$ ${b.toFixed(2)} (${pB.toFixed(1)}%) <br>
-      💵 <strong>Caixa:</strong> R$ ${c.toFixed(2)} (${pC.toFixed(1)}%) <br>
-      ${msg}
-    `;
-  }
-
-  function calcPct() {
-    const i = parseFloat(document.getElementById('vIni').value);
-    const f = parseFloat(document.getElementById('vFin').value);
-    const div = document.getElementById('resPct');
-    if(!i || !f) return;
-    const d = f - i;
-    const p = (d / i) * 100;
-    div.style.display = "block";
-    div.innerHTML = `Diferença: <strong>R$ ${d.toFixed(2)}</strong> (${p.toFixed(2)}%)`;
-  }
-
-  function calcValorFinal() {
-    const base = parseFloat(document.getElementById('vBase').value);
-    const pct = parseFloat(document.getElementById('pctAdd').value);
-    const div = document.getElementById('resFinal');
-    if(isNaN(base) || isNaN(pct)) return;
-    const add = (base * pct) / 100;
-    const total = base + add;
-    div.style.display = "block";
-    div.innerHTML = `Acréscimo: <strong>R$ ${add.toFixed(2)}</strong> <br> Valor Final: <strong>R$ ${total.toFixed(2)}</strong>`;
-  }
-</script>
-
-</body>
-</html>        background: var(--bg-dark);
+      body {
+        background: var(--bg-dark);
         color: var(--text-light);
       }
       .container {
