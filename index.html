@@ -4,12 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador VA</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0; padding: 0;
       background: #f4f4f4;
       color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: #222;
+      color: #eee;
     }
     header {
       background: #4CAF50;
@@ -18,7 +24,7 @@
       text-align: center;
     }
     main {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       padding: 1rem;
     }
@@ -36,7 +42,6 @@
     button {
       margin-top: 1rem;
       padding: 0.7rem;
-      width: 100%;
       background: #4CAF50;
       color: white;
       border: none;
@@ -47,12 +52,25 @@
     button:hover {
       background: #45a049;
     }
-    .resultado {
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .actions button {
+      flex: 1;
+    }
+    .resultado, .historico {
       margin-top: 2rem;
       padding: 1rem;
       background: white;
       border-radius: 5px;
       box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    body.dark .resultado, body.dark .historico {
+      background: #333;
+      color: #eee;
     }
     table {
       width: 100%;
@@ -67,14 +85,8 @@
     th {
       background: #f0f0f0;
     }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-    .actions button {
-      flex: 1;
+    body.dark th {
+      background: #444;
     }
   </style>
 </head>
@@ -94,19 +106,31 @@
       <input type="number" id="crescimento" placeholder="Ex: 2">
     </label>
     <button onclick="calcularVA()">Calcular aporte</button>
-    <button onclick="incrementarAlvo()">Incrementar alvo</button>
+    <button onclick="simularMes()">Simular próximo mês</button>
 
     <div class="actions">
-      <button onclick="salvarDados()">Salvar dados</button>
-      <button onclick="exportarDados()">Exportar JSON</button>
+      <button onclick="salvarDados()">Salvar</button>
+      <button onclick="exportarJSON()">Exportar JSON</button>
+      <button onclick="exportarCSV()">Exportar CSV</button>
       <input type="file" id="importarArquivo" style="display:none" onchange="importarDados(event)">
       <button onclick="document.getElementById('importarArquivo').click()">Importar JSON</button>
+      <button onclick="resetarDados()">Resetar</button>
+      <button onclick="toggleDark()">Modo Escuro/Claro</button>
     </div>
 
     <div class="resultado" id="resultado"></div>
+    <div class="historico">
+      <h2>Histórico</h2>
+      <table id="tabelaHistorico">
+        <tr><th>Mês</th><th>Alvo</th><th>Patrimônio</th><th>Aporte</th></tr>
+      </table>
+    </div>
+    <canvas id="grafico"></canvas>
   </main>
 
   <script>
+    let historico = [];
+
     function calcularVA() {
       const alvo = parseFloat(document.getElementById('alvo').value);
       const patrimonio = parseFloat(document.getElementById('patrimonio').value);
@@ -128,67 +152,295 @@
       `;
     }
 
-    function incrementarAlvo() {
+    function simularMes() {
       const alvo = parseFloat(document.getElementById('alvo').value);
+      const patrimonio = parseFloat(document.getElementById('patrimonio').value);
       const crescimento = parseFloat(document.getElementById('crescimento').value);
 
-      if (isNaN(alvo) || isNaN(crescimento)) {
-        alert("Preencha o valor alvo e crescimento.");
+      if (isNaN(alvo) || isNaN(patrimonio) || isNaN(crescimento)) {
+        alert("Preencha todos os campos corretamente.");
         return;
       }
 
       const novoAlvo = alvo * (1 + crescimento/100);
+      const aporte = Math.max(0, novoAlvo - patrimonio);
+      const novoPatrimonio = patrimonio + aporte;
+
+      historico.push({mes: historico.length+1, alvo: novoAlvo, patrimonio: novoPatrimonio, aporte: aporte});
+      atualizarTabela();
+      atualizarGrafico();
+
       document.getElementById('alvo').value = novoAlvo.toFixed(2);
-      alert(`Novo valor alvo atualizado para R$ ${novoAlvo.toFixed(2)}`);
+      document.getElementById('patrimonio').value = novoPatrimonio.toFixed(2);
+    }
+
+    function atualizarTabela() {
+      const tabela = document.getElementById('tabelaHistorico');
+      tabela.innerHTML = "<tr><th>Mês</th><th>Alvo</th><th>Patrimônio</th><th>Aporte</th></tr>";
+      historico.forEach(h => {
+        tabela.innerHTML += `<tr><td>${h.mes}</td><td>R$ ${h.alvo.toFixed(2)}</td><td>R$ ${h.patrimonio.toFixed(2)}</td><td>R$ ${h.aporte.toFixed(2)}</td></tr>`;
+      });
+    }
+
+    function atualizarGrafico() {
+      const ctx = document.getElementById('grafico').getContext('2d');
+      const labels = historico.map(h => "Mês " + h.mes);
+      const dadosAlvo = historico.map(h => h.alvo);
+      const dadosPatrimonio = historico.map(h => h.patrimonio);
+
+      if (window.graficoVA) window.graficoVA.destroy();
+      window.graficoVA = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {label: 'Alvo', data: dadosAlvo, borderColor: 'blue', fill: false},
+            {label: 'Patrimônio', data: dadosPatrimonio, borderColor: 'green', fill: false}
+          ]
+        }
+      });
     }
 
     function salvarDados() {
       const dados = {
         alvo: document.getElementById('alvo').value,
         patrimonio: document.getElementById('patrimonio').value,
-        crescimento: document.getElementById('crescimento').value
+        crescimento: document.getElementById('crescimento').value,
+        historico: historico
       };
       localStorage.setItem("VA_dados", JSON.stringify(dados));
-      alert("Dados salvos no navegador!");
+      alert("Dados salvos!");
+    }
+
+    function carregarDados() {
+      const dados = JSON.parse(localStorage.getItem("VA_dados"));
+      ifAqui está, Luna 💜 — um **HTML completo e atualizado** com todas as melhorias que conversamos, mas mantendo a simplicidade. Ele já traz:
+
+- Histórico de aportes mês a mês.  
+- Botão **“Simular próximo mês”** que incrementa o alvo automaticamente e registra no histórico.  
+- Gráfico leve com **Chart.js** mostrando evolução do alvo e patrimônio.  
+- Botão para alternar **modo escuro/claro**.  
+- Botão **resetar dados** para limpar o LocalStorage.  
+- Exportação/Importação em **JSON** e também exportação em **CSV**.  
+
+---
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador VA</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+      color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: #222;
+      color: #eee;
+    }
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    main {
+      max-width: 700px;
+      margin: auto;
+      padding: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .actions button {
+      flex: 1;
+    }
+    .resultado, .historico {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    body.dark .resultado, body.dark .historico {
+      background: #333;
+      color: #eee;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    body.dark th {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Simulador Value Averaging (VA)</h1>
+    <p>Calcule e acompanhe seus aportes</p>
+  </header>
+  <main>
+    <label>Valor alvo (R$): 
+      <input type="number" id="alvo" placeholder="Ex: 1000">
+    </label>
+    <label>Patrimônio atual (R$): 
+      <input type="number" id="patrimonio" placeholder="Ex: 800">
+    </label>
+    <label>Crescimento desejado (% ao mês): 
+      <input type="number" id="crescimento" placeholder="Ex: 2">
+    </label>
+    <button onclick="calcularVA()">Calcular aporte</button>
+    <button onclick="simularMes()">Simular próximo mês</button>
+
+    <div class="actions">
+      <button onclick="salvarDados()">Salvar</button>
+      <button onclick="exportarJSON()">Exportar JSON</button>
+      <button onclick="exportarCSV()">Exportar CSV</button>
+      <input type="file" id="importarArquivo" style="display:none" onchange="importarDados(event)">
+      <button onclick="document.getElementById('importarArquivo').click()">Importar JSON</button>
+      <button onclick="resetarDados()">Resetar</button>
+      <button onclick="toggleDark()">Modo Escuro/Claro</button>
+    </div>
+
+    <div class="resultado" id="resultado"></div>
+    <div class="historico">
+      <h2>Histórico</h2>
+      <table id="tabelaHistorico">
+        <tr><th>Mês</th><th>Alvo</th><th>Patrimônio</th><th>Aporte</th></tr>
+      </table>
+    </div>
+    <canvas id="grafico"></canvas>
+  </main>
+
+  <script>
+    let historico = [];
+
+    function calcularVA() {
+      const alvo = parseFloat(document.getElementById('alvo').value);
+      const patrimonio = parseFloat(document.getElementById('patrimonio').value);
+      const crescimento = parseFloat(document.getElementById('crescimento').value);
+
+      if (isNaN(alvo) || isNaN(patrimonio) || isNaN(crescimento)) {
+        document.getElementById('resultado').innerHTML = "<p>Preencha todos os campos corretamente.</p>";
+        return;
+      }
+
+      const alvoProximo = alvo * (1 + crescimento/100);
+      const aporteNecessario = Math.max(0, alvoProximo - patrimonio);
+
+      document.getElementById('resultado').innerHTML = `
+        <h2>Resultado</h2>
+        <p>Alvo do próximo mês: <strong>R$ ${alvoProximo.toFixed(2)}</strong></p>
+        <p>Patrimônio atual: <strong>R$ ${patrimonio.toFixed(2)}</strong></p>
+        <p>Aporte necessário: <strong>R$ ${aporteNecessario.toFixed(2)}</strong></p>
+      `;
+    }
+
+    function simularMes() {
+      const alvo = parseFloat(document.getElementById('alvo').value);
+      const patrimonio = parseFloat(document.getElementById('patrimonio').value);
+      const crescimento = parseFloat(document.getElementById('crescimento').value);
+
+      if (isNaN(alvo) || isNaN(patrimonio) || isNaN(crescimento)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+      }
+
+      const novoAlvo = alvo * (1 + crescimento/100);
+      const aporte = Math.max(0, novoAlvo - patrimonio);
+      const novoPatrimonio = patrimonio + aporte;
+
+      historico.push({mes: historico.length+1, alvo: novoAlvo, patrimonio: novoPatrimonio, aporte: aporte});
+      atualizarTabela();
+      atualizarGrafico();
+
+      document.getElementById('alvo').value = novoAlvo.toFixed(2);
+      document.getElementById('patrimonio').value = novoPatrimonio.toFixed(2);
+    }
+
+    function atualizarTabela() {
+      const tabela = document.getElementById('tabelaHistorico');
+      tabela.innerHTML = "<tr><th>Mês</th><th>Alvo</th><th>Patrimônio</th><th>Aporte</th></tr>";
+      historico.forEach(h => {
+        tabela.innerHTML += `<tr><td>${h.mes}</td><td>R$ ${h.alvo.toFixed(2)}</td><td>R$ ${h.patrimonio.toFixed(2)}</td><td>R$ ${h.aporte.toFixed(2)}</td></tr>`;
+      });
+    }
+
+    function atualizarGrafico() {
+      const ctx = document.getElementById('grafico').getContext('2d');
+      const labels = historico.map(h => "Mês " + h.mes);
+      const dadosAlvo = historico.map(h => h.alvo);
+      const dadosPatrimonio = historico.map(h => h.patrimonio);
+
+      if (window.graficoVA) window.graficoVA.destroy();
+      window.graficoVA = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {label: 'Alvo', data: dadosAlvo, borderColor: 'blue', fill: false},
+            {label: 'Patrimônio', data: dadosPatrimonio, borderColor: 'green', fill: false}
+          ]
+        }
+      });
+    }
+
+    function salvarDados() {
+      const dados = {
+        alvo: document.getElementById('alvo').value,
+        patrimonio: document.getElementById('patrimonio').value,
+        crescimento: document.getElementById('crescimento').value,
+        historico: historico
+      };
+      localStorage.setItem("VA_dados", JSON.stringify(dados));
+      alert("Dados salvos!");
     }
 
     function carregarDados() {
       const dados = JSON.parse(localStorage.getItem("VA_dados"));
       if (dados) {
-        document.getElementById('alvo').value = dados.alvo;
-        document.getElementById('patrimonio').value = dados.patrimonio;
-        document.getElementById('crescimento').value = dados.crescimento;
-      }
-    }
-
-    function exportarDados() {
-      const dados = localStorage.getItem("VA_dados");
-      if (!dados) {
-        alert("Nenhum dado salvo para exportar.");
-        return;
-      }
-      const blob = new Blob([dados], {type: "application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "VA_dados.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function importarDados(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const dados = JSON.parse(e.target.result);
-        localStorage.setItem("VA_dados", JSON.stringify(dados));
-        carregarDados();
-        alert("Dados importados com sucesso!");
-      };
-      reader.readAsText(file);
-    }
-
-    window.onload = carregarDados;
-  </script>
-</body>
-</html>
+        document.getElementBy
