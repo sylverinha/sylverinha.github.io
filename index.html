@@ -85,15 +85,16 @@
   </header>
   <main>
     <label>Valor alvo (R$): 
-      <input type="number" id="alvo" placeholder="Ex: 10000">
+      <input type="number" id="alvo" placeholder="Ex: 1000">
     </label>
     <label>Patrimônio atual (R$): 
-      <input type="number" id="patrimonio" placeholder="Ex: 8000">
+      <input type="number" id="patrimonio" placeholder="Ex: 800">
     </label>
     <label>Crescimento desejado (% ao mês): 
       <input type="number" id="crescimento" placeholder="Ex: 2">
     </label>
     <button onclick="calcularVA()">Calcular aporte</button>
+    <button onclick="incrementarAlvo()">Incrementar alvo</button>
 
     <div class="actions">
       <button onclick="salvarDados()">Salvar dados</button>
@@ -125,6 +126,20 @@
         <p>Patrimônio atual: <strong>R$ ${patrimonio.toFixed(2)}</strong></p>
         <p>Aporte necessário: <strong>R$ ${aporteNecessario.toFixed(2)}</strong></p>
       `;
+    }
+
+    function incrementarAlvo() {
+      const alvo = parseFloat(document.getElementById('alvo').value);
+      const crescimento = parseFloat(document.getElementById('crescimento').value);
+
+      if (isNaN(alvo) || isNaN(crescimento)) {
+        alert("Preencha o valor alvo e crescimento.");
+        return;
+      }
+
+      const novoAlvo = alvo * (1 + crescimento/100);
+      document.getElementById('alvo').value = novoAlvo.toFixed(2);
+      alert(`Novo valor alvo atualizado para R$ ${novoAlvo.toFixed(2)}`);
     }
 
     function salvarDados() {
