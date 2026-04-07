@@ -1,195 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Luna Pro | Gestão Financeira</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador VA</title>
   <style>
-    :root {
-      --accent: #4CAF50;
-      --btc-orange: #f7931a;
-      --bg-dark: #0f172a;
-      --card-dark: #1e293b;
-    }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
-      margin: 0;
-      padding: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #f2f2f2;
-      color: #0f172a;
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+      color: #333;
     }
-
-    @media (prefers-color-scheme: dark) {
-      body { background: var(--bg-dark); color: #1a1101; }
-      .container { background: var(--card-dark); border: 1px solid #334155; }
-      input { background: var(--bg-dark); color: #e2e8f0; border: 1px solid #475569; }
-      .resultado { background: rgba(0,0,0,0.2); }
-      h3 { border-bottom: 1px solid #334155; }
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
     }
-
-    .container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 440px;
-      box-sizing: border-box;
+    main {
+      max-width: 600px;
+      margin: auto;
+      padding: 1rem;
     }
-
-    h2 { text-align: center; margin: 0 0 20px 0; font-size: 1.3rem; color: var(--btc-orange); text-transform: uppercase; letter-spacing: 1px; }
-    h3 { font-size: 0.85rem; margin: 25px 0 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px; opacity: 0.7; text-transform: uppercase; }
-
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; opacity: 0.9; }
-    
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
     input {
       width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      font-size: 1rem;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      outline: none;
+      border-radius: 5px;
     }
-
     button {
+      margin-top: 1rem;
+      padding: 0.7rem;
       width: 100%;
-      margin-top: 10px;
-      padding: 14px;
-      background: var(--btc-orange);
+      background: #4CAF50;
       color: white;
-      font-size: 1rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
+      font-size: 1rem;
       cursor: pointer;
-      font-weight: 700;
     }
-
+    button:hover {
+      background: #45a049;
+    }
     .resultado {
-      margin-top: 15px;
-      padding: 15px;
-      background: #f8fafc;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      line-height: 1.6;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
     }
-
-    .destaque-total { font-size: 1.1rem; color: var(--btc-orange); display: block; margin-bottom: 8px; border-bottom: 1px solid rgba(247, 147, 26, 0.2); padding-bottom: 5px; }
-    .ajuste-msg { display: block; margin-top: 10px; padding: 10px; border-radius: 6px; background: rgba(56, 189, 248, 0.1); color: #38bdf8; font-weight: 700; text-align: center; }
-    
-    .divider { margin: 30px 0; border-top: 2px dashed #ddd; opacity: 0.3; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .actions button {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Simulador Value Averaging (VA)</h1>
+    <p>Calcule e acompanhe seus aportes</p>
+  </header>
+  <main>
+    <label>Valor alvo (R$): 
+      <input type="number" id="alvo" placeholder="Ex: 10000">
+    </label>
+    <label>Patrimônio atual (R$): 
+      <input type="number" id="patrimonio" placeholder="Ex: 8000">
+    </label>
+    <label>Crescimento desejado (% ao mês): 
+      <input type="number" id="crescimento" placeholder="Ex: 2">
+    </label>
+    <button onclick="calcularVA()">Calcular aporte</button>
 
-<div class="container">
-  <h2>Estratégia Luna ₿</h2>
-
-  <h3>Rebalanceamento de Carteira</h3>
-  <div class="grid">
-    <div>
-      <label>Saldo BTC (R$)</label>
-      <input type="number" id="btc" placeholder="0.00">
+    <div class="actions">
+      <button onclick="salvarDados()">Salvar dados</button>
+      <button onclick="exportarDados()">Exportar JSON</button>
+      <input type="file" id="importarArquivo" style="display:none" onchange="importarDados(event)">
+      <button onclick="document.getElementById('importarArquivo').click()">Importar JSON</button>
     </div>
-    <div>
-      <label>Saldo Caixa (R$)</label>
-      <input type="number" id="caixa" placeholder="0.00">
-    </div>
-  </div>
 
-  <div class="grid">
-    <div>
-      <label>Meta BTC (%)</label>
-      <input type="number" id="mBtc" value="50">
-    </div>
-    <div>
-      <label>Meta Caixa (%)</label>
-      <input type="number" id="mCaixa" value="50">
-    </div>
-  </div>
+    <div class="resultado" id="resultado"></div>
+  </main>
 
-  <button onclick="analisar()">Analisar e Rebalancear</button>
-  <div id="resAnalise" class="resultado" style="display:none;"></div>
+  <script>
+    function calcularVA() {
+      const alvo = parseFloat(document.getElementById('alvo').value);
+      const patrimonio = parseFloat(document.getElementById('patrimonio').value);
+      const crescimento = parseFloat(document.getElementById('crescimento').value);
 
-  <h3>Calculadora de Diferença (%)</h3>
-  <div class="grid">
-    <input type="number" id="vIni" placeholder="Valor Inicial">
-    <input type="number" id="vFin" placeholder="Valor Final">
-  </div>
-  <button style="background:var(--accent)" onclick="calcPct()">Calcular Diferença</button>
-  <div id="resPct" class="resultado" style="display:none;"></div>
+      if (isNaN(alvo) || isNaN(patrimonio) || isNaN(crescimento)) {
+        document.getElementById('resultado').innerHTML = "<p>Preencha todos os campos corretamente.</p>";
+        return;
+      }
 
-  <h3>Cálculo de Acréscimo (%)</h3>
-  <div class="grid">
-    <input type="number" id="vBase" placeholder="Valor Base">
-    <input type="number" id="pctAdd" placeholder="Porcentagem %">
-  </div>
-  <button style="background:var(--accent)" onclick="calcValorFinal()">Calcular Valor Final</button>
-  <div id="resFinal" class="resultado" style="display:none;"></div>
+      const alvoProximo = alvo * (1 + crescimento/100);
+      const aporteNecessario = Math.max(0, alvoProximo - patrimonio);
 
-</div>
-
-<script>
-  function analisar() {
-    const b = parseFloat(document.getElementById('btc').value) || 0;
-    const c = parseFloat(document.getElementById('caixa').value) || 0;
-    const mb = parseFloat(document.getElementById('mBtc').value) || 50;
-    const div = document.getElementById('resAnalise');
-
-    const total = b + c;
-    if(total === 0) return;
-
-    const pB = (b / total) * 100;
-    const pC = (c / total) * 100;
-    const idealB = (total * mb) / 100;
-    const dif = b - idealB;
-
-    let msg = "";
-    if (Math.abs(dif) < 1) {
-      msg = `<span class="ajuste-msg" style="color:var(--accent); background:rgba(76,175,80,0.1)">✅ Equilibrado!</span>`;
-    } else if (dif > 0) {
-      msg = `<span class="ajuste-msg">Mover R$ ${dif.toFixed(2)} do BTC p/ Caixa</span>`;
-    } else {
-      msg = `<span class="ajuste-msg">Mover R$ ${Math.abs(dif).toFixed(2)} do Caixa p/ BTC</span>`;
+      document.getElementById('resultado').innerHTML = `
+        <h2>Resultado</h2>
+        <p>Alvo do próximo mês: <strong>R$ ${alvoProximo.toFixed(2)}</strong></p>
+        <p>Patrimônio atual: <strong>R$ ${patrimonio.toFixed(2)}</strong></p>
+        <p>Aporte necessário: <strong>R$ ${aporteNecessario.toFixed(2)}</strong></p>
+      `;
     }
 
-    div.style.display = "block";
-    div.innerHTML = `
-      <strong class="destaque-total">Total: R$ ${total.toFixed(2)}</strong>
-      ₿ <strong>BTC:</strong> R$ ${b.toFixed(2)} (${pB.toFixed(1)}%) <br>
-      💵 <strong>Caixa:</strong> R$ ${c.toFixed(2)} (${pC.toFixed(1)}%) <br>
-      ${msg}
-    `;
-  }
+    function salvarDados() {
+      const dados = {
+        alvo: document.getElementById('alvo').value,
+        patrimonio: document.getElementById('patrimonio').value,
+        crescimento: document.getElementById('crescimento').value
+      };
+      localStorage.setItem("VA_dados", JSON.stringify(dados));
+      alert("Dados salvos no navegador!");
+    }
 
-  function calcPct() {
-    const i = parseFloat(document.getElementById('vIni').value);
-    const f = parseFloat(document.getElementById('vFin').value);
-    const div = document.getElementById('resPct');
-    if(!i || !f) return;
-    const d = f - i;
-    const p = (d / i) * 100;
-    div.style.display = "block";
-    div.innerHTML = `Diferença: <strong>R$ ${d.toFixed(2)}</strong> (${p.toFixed(2)}%)`;
-  }
+    function carregarDados() {
+      const dados = JSON.parse(localStorage.getItem("VA_dados"));
+      if (dados) {
+        document.getElementById('alvo').value = dados.alvo;
+        document.getElementById('patrimonio').value = dados.patrimonio;
+        document.getElementById('crescimento').value = dados.crescimento;
+      }
+    }
 
-  function calcValorFinal() {
-    const base = parseFloat(document.getElementById('vBase').value);
-    const pct = parseFloat(document.getElementById('pctAdd').value);
-    const div = document.getElementById('resFinal');
-    if(isNaN(base) || isNaN(pct)) return;
-    const add = (base * pct) / 100;
-    const total = base + add;
-    div.style.display = "block";
-    div.innerHTML = `Acréscimo: <strong>R$ ${add.toFixed(2)}</strong> <br> Valor Final: <strong>R$ ${total.toFixed(2)}</strong>`;
-  }
-</script>
+    function exportarDados() {
+      const dados = localStorage.getItem("VA_dados");
+      if (!dados) {
+        alert("Nenhum dado salvo para exportar.");
+        return;
+      }
+      const blob = new Blob([dados], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "VA_dados.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
+    function importarDados(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dados = JSON.parse(e.target.result);
+        localStorage.setItem("VA_dados", JSON.stringify(dados));
+        carregarDados();
+        alert("Dados importados com sucesso!");
+      };
+      reader.readAsText(file);
+    }
+
+    window.onload = carregarDados;
+  </script>
 </body>
 </html>
